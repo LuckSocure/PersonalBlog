@@ -22,6 +22,7 @@ path.set('/queryAllTag', queryAllTag);
 function queryByTag(request, response) {
     var params = url.parse(request.url, true).query;
     tagsDao.queryTags(params.tag, function (result) {
+        console.log(result)
         if (result == '' || result.length == 0) {
             response.writeHead(200);
             response.write(respUtil.writeRequest('success', '查询成功', result));

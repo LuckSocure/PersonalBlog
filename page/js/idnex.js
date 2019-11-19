@@ -39,7 +39,7 @@ var articleList = new Vue({
         getPage() {
             return function (page, pageSize) {
                 var search = location.search.indexOf('?') > -1 ? location.search.split('?')[1].split('&') : '';
-                
+
                 var tag = '';
                 for (var i = 0; i < search.length; i++) {
                     if (search[i].split('=')[0] == 'tag') {
@@ -161,5 +161,40 @@ var articleList = new Vue({
     },
     created() {
         this.getPage(this.page, this.pageSize);
+    }
+});
+
+var searchBar = new Vue({
+    el: '#search_bar',
+    data: {
+        search: ''
+    },
+    computed: {
+        searchByValue() {
+            return function () {
+                axios({
+                    method: 'get',
+                    url: '/queryByTag?page=' + (articleList.page - 1) + '&pageSize=' + articleList.pageSize + '&tag=' + searchBar.search
+                }).then(function (resp) {
+                    var list = [];
+                    var result = resp.data.data;
+                    for (var i = 0; i < result.length; i++) {
+                        var temp = {};
+                        temp.title = result[i].title;
+                        temp.content = result[i].content;
+                        temp.data = result[i].ctime;
+                        temp.views = result[i].views;
+                        temp.tags = result[i].tags;
+                        temp.id = result[i].id;
+                        temp.link = '/blog_deatil.html?bid=' + result[i].id;
+                        list.push(temp);
+                    }
+                    articleList.articleArr = list;
+                    articleList.count = result.length;
+                    articleList.page = 1;
+                    articleList.generatePageTool;
+                })
+            }
+        }
     }
 });

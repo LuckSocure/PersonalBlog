@@ -30,6 +30,10 @@ path.set('/queryRandomCode', queryRandomCode);
 function queryCommentByBlogId (request, response) {
     var params = url.parse(request.url, true).query;
     commentDao.queryCommentByBlogId(parseInt(params.bid), function (result) {
+        for (var i = 0; i < result.length; i ++) {
+            result[i].ctime = timeUtil.timeFormat(result[i].ctime);
+            result[i].utime = timeUtil.timeFormat(result[i].utime);
+        }
         response.writeHead(200);
         response.write(respUtil.writeRequest('success', '查询成功', result));
         response.end();
@@ -49,6 +53,10 @@ path.set('/queryCommentCountByBlogId', queryCommentCountByBlogId);
 
 function queryNewComments (request, response) {
     commentDao.queryNewComments(7, function (result) {
+        for (var i = 0; i < result.length; i ++) {
+            result[i].ctime = timeUtil.timeFormat(result[i].ctime);
+            result[i].utime = timeUtil.timeFormat(result[i].utime);
+        }
         response.writeHead(200);
         response.write(respUtil.writeRequest('success', '查询成功', result));
         response.end();
